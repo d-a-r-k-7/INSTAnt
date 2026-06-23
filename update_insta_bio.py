@@ -170,6 +170,15 @@ def update_instagram_bio(username, password, new_bio):
             return False
 
         time.sleep(3)
+        if "codeentry" in driver.current_url:
+            print("Instagram verification required")
+            raise Exception("Login blocked by verification")
+
+        elif "/accounts/login" not in driver.current_url:
+            print("Login successful")
+
+        else:
+            raise Exception("Login failed")
 
         # Dismiss "Save your login info?" or "Turn on notifications?" prompts
         for _ in range(2):
