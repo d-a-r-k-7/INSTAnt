@@ -66,6 +66,13 @@ def update_instagram_bio(username, password, new_bio):
     try:
         print("🔐 Logging in to Instagram...")
         driver.get("https://www.instagram.com/accounts/login/")
+        print("Current URL:", driver.current_url)
+        print("Page title:", driver.title)
+
+        with open("page.html", "w", encoding="utf-8") as f:
+            f.write(driver.page_source)
+
+        print("Saved page source")
         time.sleep(4)
 
         try:
