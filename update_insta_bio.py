@@ -120,7 +120,7 @@ def update_instagram_bio(username, password, new_bio):
         use_subprocess=True,
     )
 
-    wait = WebDriverWait(driver, 20)
+    wait = WebDriverWait(driver, 30)
 
     try:
         # ── 1. Log in ──────────────────────────────────────────────────────
@@ -136,19 +136,30 @@ def update_instagram_bio(username, password, new_bio):
 
         # Dismiss cookie banner if present
         try:
-            cookie_btn = driver.find_element(
-                By.XPATH,
-                "//button[contains(text(),'Allow') or contains(text(),'Accept')]"
+            cookie_btn = wait.until(
+                EC.element_to_be_clickable(
+                    (By.XPATH, "//button[contains(text(),'Allow') or contains(text(),'Accept')]")
+                )
             )
             cookie_btn.click()
-            time.sleep(1)
-        except Exception:
+        except:
             pass
 
         # Type credentials
-        username_field = wait.until(
-            EC.presence_of_element_located((By.NAME, "username"))
-        )
+        try:
+            username_field = wait.until(
+                EC.presence_of_element_located((By.NAME, "username"))
+            )
+
+        except Exception:
+            print("Username field not found")
+            print("Current URL:", driver.current_url)
+            print("Title:", driver.title)
+
+            with open("login_failed.html", "w", encoding="utf-8") as f:
+                f.write(driver.page_source)
+
+            raise
         username_field.clear()
         username_field.send_keys(username)
         time.sleep(0.5)
