@@ -146,25 +146,19 @@ def update_instagram_bio(username, password, new_bio):
             pass
 
         # Type credentials
-        try:
-            username_field = wait.until(
-                EC.presence_of_element_located((By.NAME, "username"))
-            )
+        username_field = wait.until(
+            EC.element_to_be_clickable((By.NAME, "email"))
+        )
 
-        except Exception:
-            print("Username field not found")
-            print("Current URL:", driver.current_url)
-            print("Title:", driver.title)
-
-            with open("login_failed.html", "w", encoding="utf-8") as f:
-                f.write(driver.page_source)
-
-            raise
+        username_field.click()
         username_field.clear()
         username_field.send_keys(username)
-        time.sleep(0.5)
 
-        password_field = driver.find_element(By.NAME, "password")
+        password_field = wait.until(
+            EC.element_to_be_clickable((By.NAME, "pass"))
+        )
+
+        password_field.click()
         password_field.clear()
         password_field.send_keys(password)
         time.sleep(1)
