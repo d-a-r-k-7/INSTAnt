@@ -50,9 +50,10 @@ def build_bio(days):
 
 def update_instagram_bio(username, password, new_bio):
     options = uc.ChromeOptions()
+    options.add_argument("--headless=new")
     options.add_argument("--no-sandbox")
     options.add_argument("--disable-dev-shm-usage")
-
+    options.add_argument("--disable-gpu")
 
     driver = uc.Chrome(
         options=options,
