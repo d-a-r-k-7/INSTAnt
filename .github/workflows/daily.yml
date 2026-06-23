@@ -21,14 +21,25 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
+      # Ensure Chrome and ChromeDriver are the same version.
+      # undetected-chromedriver downloads its own ChromeDriver, but it must
+      # match the Chrome *binary* version.  The setup-chrome action pins both.
+      - name: Install Chrome (pinned)
+        uses: browser-actions/setup-chrome@v1
+        with:
+          chrome-version: stable   # or pin a specific version e.g. '124'
+        id: setup-chrome
+
       - name: Run script
         env:
           IG_USERNAME: ${{ secrets.IG_USERNAME }}
           IG_PASSWORD: ${{ secrets.IG_PASSWORD }}
         run: python update_insta_bio.py
 
-      - name: Upload page source
+      - name: Upload debug snapshots
+        if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: page-source
-          path: page.html
+          name: debug-snapshots
+          path: "*.html"
+          if-no-files-found: ignore

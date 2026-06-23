@@ -95,10 +95,28 @@ def update_instagram_bio(username, password, new_bio):
     options.add_argument("--disable-gpu")
     options.add_argument("--window-size=1280,900")
 
+    # Detect installed Chrome major version so ChromeDriver matches exactly.
+    # undetected-chromedriver defaults to the *latest* ChromeDriver, which
+    # can be one version ahead of the Chrome binary on GitHub-hosted runners.
+    import subprocess, re
+    chrome_version = None
+    for binary in ("google-chrome", "google-chrome-stable", "chromium-browser", "chromium"):
+        try:
+            out = subprocess.check_output([binary, "--version"], stderr=subprocess.DEVNULL).decode()
+            m = re.search(r"(\d+)\.", out)
+            if m:
+                chrome_version = int(m.group(1))
+                print(f"🔍 Detected Chrome binary: {out.strip()}  →  major version {chrome_version}")
+                break
+        except Exception:
+            continue
+
+    if chrome_version is None:
+        print("⚠️  Could not detect Chrome version; letting undetected-chromedriver auto-detect.")
+
     driver = uc.Chrome(
         options=options,
-        # Remove version_main so undetected-chromedriver auto-detects
-        # the installed Chrome version on the runner
+        version_main=chrome_version,   # None = auto-detect (fine locally); int = pin to match binary
         use_subprocess=True,
     )
 
